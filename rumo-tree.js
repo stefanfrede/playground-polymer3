@@ -1,33 +1,48 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 
-/**
- * `rumo-tree`
- * Simple Polymer 3 tree component
- *
- * @customElement
- * @polymer
- * @demo demo/index.html
- */
+import './rumo-tree-item';
+
 class RumoTree extends PolymerElement {
   static get properties () {
     return {
-      message: {
-        type: String,
-        value: ''
+      data: {
+        type: Object,
+        value() {
+          return {};
+        },
+        observer: '_dataChanged'
       },
+      selected: {
+        type: Object,
+        notify: true,
+        value() {
+          return null;
+        }
+      }
     };
-  }
-
-  constructor() {
-    super();
-
-    this.message = 'Hello World! I\'m a Polymer element :)';
   }
 
   ready() {
     super.ready();
 
     console.log(this.tagName);
+
+    this.addEventListener('select', this._selectNode);
+  }
+
+  _dataChanged() {
+    this.$.root.data = this.data;
+  }
+
+  _selectNode(e) {
+    if (this.selected) {
+      this.selected.classList.toggle('selected');
+    }
+
+    if (e.detail && e.detail.tagName === 'RUMO-TREE-ITEM') {
+      this.selected = e.detail;
+      this.selected.classList.toggle('selected');
+    }
   }
 
   static get template () {
@@ -38,12 +53,7 @@ class RumoTree extends PolymerElement {
         }
       </style>
 
-      <h1>
-        rumo-tree
-      </h1>
-      <p>
-        [[message]]
-      </p>
+      <rumo-tree-item id="root" data="[[data]]"></rumo-tree-item>
     `;
   }
 }

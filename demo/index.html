@@ -23,7 +23,31 @@
     <h3>Basic rumo-tree demo</h3>
     <demo-snippet>
       <template>
-        <rumo-tree></rumo-tree>
+        <rumo-tree id="tree"></rumo-tree>
+        <script>
+          const tree = document.getElementById('tree');
+
+          tree.data = {
+            name: 'Hello',
+            children: [
+              {
+                name: 'World',
+                icon: 'language',
+              },
+              {
+                name: 'There',
+              },
+              {
+                name: 'You',
+                children: [
+                  {
+                    name: 'Are',
+                  },
+                ],
+              },
+            ],
+          };
+        </script>
       </template>
     </demo-snippet>
   </div>
