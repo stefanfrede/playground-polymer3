@@ -1,12 +1,28 @@
 {
-  "devDependencies": {
-    "polymer-cli": "^1.7.0-pre.13"
-  },
   "name": "playground-polymer3",
   "version": "1.0.0",
-  "description": "Simple Polymer 3 tree component",
-  "main": "index.js",
-  "repository": "git@github.com:stefanfrede/playground-polymer3.git",
+  "description": "Playground for Polymer 3.0",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:stefanfrede/playground-polymer3.git"
+  },
+  "keywords": [
+    "polymer"
+  ],
   "author": "Stefan Frede <public@frede.biz>",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stefanfrede/playground-polymer3/issues"
+  },
+  "homepage": "https://github.com/stefanfrede/playground-polymer3#readme",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0-pre.12"
+  },
+  "devDependencies": {
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.12",
+    "@webcomponents/webcomponentsjs": "^1.0.0",
+    "polymer-cli": "^1.7.0-pre.13",
+    "wct-browser-legacy": "^0.0.1-pre.11"
+  }
 }
