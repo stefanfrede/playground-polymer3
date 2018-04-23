@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "polymer-cli": "^1.7.0-pre.13"
+  },
+  "name": "playground-polymer3",
+  "version": "1.0.0",
+  "description": "Simple Polymer 3 tree component",
+  "main": "index.js",
+  "repository": "git@github.com:stefanfrede/playground-polymer3.git",
+  "author": "Stefan Frede <public@frede.biz>",
+  "license": "MIT"
+}
