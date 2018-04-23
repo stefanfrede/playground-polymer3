@@ -3,22 +3,22 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import './rumo-tree-item';
 
 class RumoTree extends PolymerElement {
-  static get properties () {
+  static get properties() {
     return {
       data: {
         type: Object,
         value() {
           return {};
         },
-        observer: '_dataChanged'
+        observer: '_dataChanged',
       },
       selected: {
         type: Object,
         notify: true,
         value() {
           return null;
-        }
-      }
+        },
+      },
     };
   }
 
@@ -45,7 +45,7 @@ class RumoTree extends PolymerElement {
     }
   }
 
-  static get template () {
+  static get template() {
     return html`
       <style>
         :host {
