@@ -1,14 +1,18 @@
 {
   "name": "playground-polymer3",
   "version": "1.0.0",
-  "description": "Playground for Polymer 3.0",
-  "main": "index.html",
+  "description": "Simple Polymer 3 tree component",
+  "main": "rumo-tree.js",
   "scripts": {
     "precommit": "lint-staged",
     "lint": "npm run lint:javascript && npm run lint:polymer",
     "lint:javascript": "npx eslint .",
     "lint:polymer": "polymer lint"
   },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
   "lint-staged": {
     "*.js": [
       "eslint --fix",
@@ -20,7 +24,9 @@
     "url": "git@github.com:stefanfrede/playground-polymer3.git"
   },
   "keywords": [
-    "polymer"
+    "polymer",
+    "polymer3",
+    "webcomponents"
   ],
   "author": "Stefan Frede <public@frede.biz>",
   "license": "MIT",
