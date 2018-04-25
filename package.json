@@ -43,7 +43,6 @@
     "eslint-plugin-prettier": "^2.6.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.0.4",
-    "polymer-cli": "^1.7.0-pre.13",
     "prettier": "^1.12.1",
     "wct-browser-legacy": "^0.0.1-pre.11"
   }
