@@ -4,7 +4,10 @@
   "description": "Playground for Polymer 3.0",
   "main": "index.html",
   "scripts": {
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "lint": "yarn run lint:javascript && yarn run lint:polymer",
+    "lint:javascript": "yarn eslint .",
+    "lint:polymer": "yarn polymer lint"
   },
   "lint-staged": {
     "*.js": [
