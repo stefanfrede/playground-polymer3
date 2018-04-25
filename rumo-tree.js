@@ -59,4 +59,4 @@ class RumoTree extends PolymerElement {
 }
 
 // Register the element with the browser.
-customElements.define('rumo-tree', RumoTree);
+window.customElements.define('rumo-tree', RumoTree);
