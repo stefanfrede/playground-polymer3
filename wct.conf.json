@@ -1,16 +1,34 @@
 {
   "plugins": {
+    "local": {
+      "browserOptions": {
+        "chrome": [
+          "headless",
+          "disable-gpu",
+          "no-sandbox"
+        ],
+        "firefox": [
+          "-headless"
+        ]
+      }
+    },
     "sauce": {
+      "disabled": true,
       "browsers": [
         {
           "browserName": "microsoftedge",
           "platform": "Windows 10",
-          "version": ""
+          "version": "latest"
         },
         {
-          "browserName": "internet explorer",
-          "platform": "Windows 7",
-          "version": "11"
+          "browserName": "microsoftedge",
+          "platform": "Windows 10",
+          "version": "latest-1"
+        },
+        {
+          "browserName": "safari",
+          "platform": "OS X 10.11",
+          "version": "latest"
         },
         {
           "browserName": "safari",
