@@ -18,40 +18,35 @@ class RumoTreeItem extends PolymerElement {
           return {};
         },
       },
-      open: {
-        type: String,
-        computed: '_computeOpen(data.open, data.children)',
-      },
       icon: {
         type: String,
-        computed: '_computeIcon(data.icon)',
+        computed: '_computeIcon(data.icon, data.children)',
+      },
+      open: {
+        type: Boolean,
+        computed: '_computeOpen(data.open, data.children, data.root)',
       },
     };
   }
 
-  ready() {
-    super.ready();
-
-    console.log(this.tagName);
-  }
-
-  _computeOpen(open = false, children) {
-    const hasChildren = R.both(R.is(Array), R.compose(R.not, R.isEmpty))(
-      children
-    );
-
-    return (
-      'node__status ' +
-      (open && hasChildren
+  _computeOpen(open = false, children, root = false) {
+    const status = this._hasChildren(children)
+      ? open
         ? 'node__status--expanded'
-        : hasChildren
-          ? 'node__status--collapsed'
-          : '')
-    );
+        : 'node__status--collapsed'
+      : root
+        ? 'node__status--loading'
+        : '';
+
+    return `node__status ${status}`;
   }
 
-  _computeIcon(icon) {
-    return icon ? icon : 'folder';
+  _computeIcon(icon = '', children) {
+    return this._isNotEmpty(icon)
+      ? icon
+      : this._hasChildren(children)
+        ? 'folder'
+        : 'description';
   }
 
   _selectNode() {
@@ -65,15 +60,6 @@ class RumoTreeItem extends PolymerElement {
   }
 
   _toggleChildren() {
-    const isClosed = !this.data.open;
-    const hasChildren = R.both(R.is(Array), R.compose(R.not, R.isEmpty))(
-      this.data.children
-    );
-
-    const open = isClosed && hasChildren;
-
-    this.set('data.open', open);
-
     this.dispatchEvent(
       new CustomEvent('toggle', {
         bubbles: true,
@@ -83,12 +69,20 @@ class RumoTreeItem extends PolymerElement {
     );
   }
 
-  getParent() {
-    return this.domHost.tagName === 'RUMO-TREE-ITEM' ? this.domHost : null;
+  _isNotEmpty(item) {
+    return R.compose(R.not, R.isEmpty)(item);
+  }
+
+  _hasChildren(children) {
+    return R.both(R.is(Array), this._isNotEmpty)(children);
+  }
+
+  setOpen(open, children) {
+    this.set('data.open', R.and(R.not(open), this._hasChildren(children)));
   }
 
   getChildren() {
-    return this.$.root.querySelectorAll('rumo-tree-item');
+    return this.shadowRoot.querySelectorAll('rumo-tree-item');
   }
 
   static get template() {
@@ -96,13 +90,13 @@ class RumoTreeItem extends PolymerElement {
       <style>
         :host {
           /**
-          * Typography settings
-          */
+           * Typography settings
+           */
           @apply --paper-font-body1;
 
           /**
-          * Generic variables for easy theming
-          */
+           * Generic variables for easy theming
+           */
           --primary-text-color: var(--light-theme-text-color);
           --primary-background-color: var(--light-theme-background-color);
           --secondary-text-color: var(--light-theme-secondary-color);
@@ -111,8 +105,8 @@ class RumoTreeItem extends PolymerElement {
           --error-color: var(--paper-deep-orange-a700);
 
           /**
-          * Primary and accent colors
-          */
+           * Primary and accent colors
+           */
           --primary-color: var(--paper-blue-500);
           --light-primary-color: var(--paper-blue-100);
           --dark-primary-color: var(--paper-blue-700);
@@ -122,8 +116,8 @@ class RumoTreeItem extends PolymerElement {
           --dark-accent-color: var(--paper-blue-a400);
 
           /**
-          * Light background theme
-          */
+           * Light background theme
+           */
           --light-theme-background-color: #ffffff;
           --light-theme-base-color: #000000;
           --light-theme-text-color: var(--paper-grey-900);
@@ -132,8 +126,8 @@ class RumoTreeItem extends PolymerElement {
           --light-theme-divider-color: #dbdbdb;
 
           /**
-          * Color transition for hover effects
-          */
+           * Color transition for hover effects
+           */
           --color-transition: color 0.25s ease-out;
 
           background-color: var(--primary-background-color);
@@ -144,6 +138,10 @@ class RumoTreeItem extends PolymerElement {
         :host(.selected) .node__label .node__icon,
         :host(.selected) .node__label .node__name {
           color: var(--primary-color);
+        }
+
+        :host(.marked) .node__label .node__icon {
+          color: var(--light-accent-color);
         }
 
         .node__data-container {
@@ -159,11 +157,15 @@ class RumoTreeItem extends PolymerElement {
 
         .node__status {
           align-items: center;
-          cursor: pointer;
           display: flex;
           height: 24px;
           justify-content: center;
           width: 24px;
+        }
+
+        .node__status--collapsed,
+        .node__status--expanded {
+          cursor: pointer;
         }
 
         .node__status > .node__icon {
@@ -177,19 +179,28 @@ class RumoTreeItem extends PolymerElement {
         }
 
         .node__status--collapsed .node__icon--open,
-        .node__status--expanded .node__icon--close {
+        .node__status--expanded .node__icon--close,
+        .node__status--loading .node__icon--load {
           display: inline-block;
-        }
-
-        .node__status--collapsed .node__icon--close,
-        .node__status--expanded .node__icon--open {
-          display: none;
         }
 
         .node__icon {
           color: var(--secondary-text-color);
           height: 24px;
           width: 24px;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        .node__icon--load {
+          animation: spin 1s linear infinite;
         }
 
         .node__icon--small {
@@ -216,6 +227,9 @@ class RumoTreeItem extends PolymerElement {
 
       <div class="node__data-container">
         <div class$="{{open}}" on-click="_toggleChildren">
+          <iron-icon
+            class="node__icon node__icon--small node__icon--load"
+            icon="autorenew"></iron-icon>
           <iron-icon
             class="node__icon node__icon--small node__icon--open"
             icon="add"></iron-icon>
