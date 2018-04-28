@@ -12,12 +12,12 @@ git:
   depth: 1
 install:
   - npm i -g polymer-cli@next
-  - npx polymer install
+  - polymer install
 before_script:
   - npm i -g eslint eslint-config-prettier eslint-plugin-prettier prettier
   - npm run lint
 script:
-  - xvfb-run npm polymer test
+  - xvfb-run polymer test
 notifications:
   email:
     on_success: never
