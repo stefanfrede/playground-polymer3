@@ -28,8 +28,9 @@
     suite('rumo-tree', () => {
       test('instantiating the element with default properties works', () => {
         const element = fixture('BasicTestFixture');
-        assert.deepEqual(element.data, {});
-        assert.equal(element.selected, null);
+        assert.equal(element.data.icon, 'folder');
+        assert.equal(element.data.name, 'Loading…');
+        assert.deepEqual(element.selected, []);
       });
 
       test('setting a property on the element works', () => {
