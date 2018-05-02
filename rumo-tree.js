@@ -82,7 +82,7 @@ class RumoTree extends PolymerElement {
       }
 
       if (isNotEmpty(this.selected)) {
-        this._addSelection(this.selected);
+        R.forEach(this._addSelection, this.selected);
       }
     }
   }
@@ -146,25 +146,23 @@ class RumoTree extends PolymerElement {
     const isSelected = !!~index;
 
     if (isSelected) {
-      this._removeSelection(selected, index);
+      this._removeSelection(selected[index]);
       this.splice('selected', index, 1);
     }
   }
 
-  _addSelection(selected) {
+  _addSelection(target) {
     const addClass = R.curry((node, className) =>
       node.classList.add(className)
     );
     const addClassMarked = addClass(R.__, 'marked');
     const addClassSelected = addClass(R.__, 'selected');
 
-    selected.forEach(node => {
-      addClassSelected(node.key);
-      R.forEach(addClassMarked, node.value);
-    });
+    addClassSelected(target.key);
+    R.forEach(addClassMarked, target.value);
   }
 
-  _removeSelection(selected, index) {
+  _removeSelection(target) {
     const removeClass = R.curry((node, className) =>
       node.classList.remove(className)
     );
@@ -173,9 +171,9 @@ class RumoTree extends PolymerElement {
     const removeClassSelected = removeClass(R.__, 'selected');
 
     // Remove the selected class from target
-    removeClassSelected(selected[index].key);
+    removeClassSelected(target.key);
     // Remove the marked class from target ancestors
-    R.forEach(removeClassMarked, selected[index].value);
+    R.forEach(removeClassMarked, target.value);
   }
 
   static get template() {
