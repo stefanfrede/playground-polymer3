@@ -87,6 +87,13 @@ class RumoTree extends PolymerElement {
     }
   }
 
+  _onToggle(e) {
+    const target = e.detail;
+    const data = target.data;
+
+    target.setOpen(data.open, data.children);
+  }
+
   _deselectChild(children, parent, ancestors, target) {
     children.forEach(child => {
       const findChildIn = R.findIndex(R.equals(child));
@@ -121,13 +128,6 @@ class RumoTree extends PolymerElement {
         this._deselectChildren(child.getChildren(), selected);
       }
     });
-  }
-
-  _onToggle(e) {
-    const target = e.detail;
-    const data = target.data;
-
-    target.setOpen(data.open, data.children);
   }
 
   _addSelected(key, value) {
