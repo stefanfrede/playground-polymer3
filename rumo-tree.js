@@ -4,6 +4,16 @@ import './rumo-tree-item';
 
 import * as R from 'ramda';
 
+const isNotEmpty = R.complement(R.isEmpty);
+const isNotNil = R.complement(R.isNil);
+
+const containsClass = R.curry((node, className) =>
+  node.classList.contains(className)
+);
+
+const containsClassMarked = containsClass(R.__, 'marked');
+const containsClassSelected = containsClass(R.__, 'selected');
+
 class RumoTree extends PolymerElement {
   static get properties() {
     return {
@@ -18,18 +28,10 @@ class RumoTree extends PolymerElement {
         },
         observer: '_onDataChange',
       },
-      marked: {
+      selected: {
         type: Array,
-        notify: true,
         value() {
           return [];
-        },
-      },
-      selected: {
-        type: Object,
-        notify: true,
-        value() {
-          return {};
         },
       },
     };
@@ -47,53 +49,78 @@ class RumoTree extends PolymerElement {
   }
 
   _onSelect(e) {
-    const path = e.composedPath();
-    const target = e.detail;
-
-    const isNotTarget = R.compose(R.not, R.equals(target));
-
     const isTreeItem = node => node.tagName === 'RUMO-TREE-ITEM';
-    const treeItems = R.filter(isTreeItem, path);
 
-    const addClass = R.curry((node, className) =>
-      node.classList.add(className)
+    const target = e.detail;
+    const isNotTarget = R.compose(R.not, R.equals(target));
+    const isValidTarget = R.both(isNotNil, isTreeItem);
+
+    const path = e.composedPath();
+    const ancestors = R.filter(isNotTarget, R.filter(isTreeItem, path));
+
+    if (isValidTarget(target)) {
+      if (containsClassSelected(target)) {
+        this._removeSelected(target, this.selected);
+      } else {
+        if (containsClassMarked(target)) {
+          this._deselectChildren(target.getChildren(), this.selected);
+        }
+
+        const [selectedAncestor] = R.filter(containsClassSelected, ancestors);
+
+        if (isNotNil(selectedAncestor)) {
+          this._removeSelected(selectedAncestor, this.selected);
+          this._deselectChild(
+            Array.from(selectedAncestor.getChildren()),
+            selectedAncestor,
+            ancestors,
+            target
+          );
+        } else {
+          this._addSelected(target, ancestors);
+        }
+      }
+
+      if (isNotEmpty(this.selected)) {
+        this._addSelection(this.selected);
+      }
+    }
+  }
+
+  _deselectChild(children, parent, ancestors, target) {
+    children.forEach(child => {
+      const findChildIn = R.findIndex(R.equals(child));
+      const index = findChildIn(ancestors);
+      const hasSelected = !!~index;
+
+      if (hasSelected) {
+        this._deselectChild(child.getChildren(), child, ancestors, target);
+      } else {
+        if (R.not(R.equals(child, target))) {
+          const findParentIn = R.findIndex(R.equals(parent));
+          const index = findParentIn(ancestors);
+
+          this._addSelected(child, ancestors.slice(index));
+        }
+      }
+    });
+  }
+
+  _deselectChildren(children, selected) {
+    const hasChildren = R.compose(
+      R.both(isNotNil, isNotEmpty),
+      R.prop('children')
     );
 
-    const removeClass = R.curry((node, className) =>
-      node.classList.remove(className)
-    );
+    children.forEach(child => {
+      if (containsClassSelected(child)) {
+        this._removeSelected(child, selected);
+      }
 
-    const addClassMarked = addClass(R.__, 'marked');
-    const addClassSelected = addClass(R.__, 'selected');
-    const removeClassMarked = removeClass(R.__, 'marked');
-    const removeClassSelected = removeClass(R.__, 'selected');
-
-    const isNotEmpty = R.compose(R.not, R.isEmpty);
-    const isNotNil = R.compose(R.not, R.isNil);
-
-    const addMarked = node => {
-      addClassMarked(node);
-      this.push('marked', node);
-    };
-
-    const addSelected = node => {
-      addClassSelected(node);
-      this.set('selected', node);
-    };
-
-    if (isNotEmpty(this.marked)) {
-      R.forEach(removeClassMarked, this.marked);
-      this.set('marked', []);
-    }
-
-    if (isNotEmpty(this.selected)) {
-      removeClassSelected(this.selected);
-    }
-
-    if (R.and(isNotNil(target), isTreeItem(target))) {
-      addSelected(target);
-      R.forEach(R.when(isNotTarget, addMarked), treeItems);
-    }
+      if (hasChildren(child.data)) {
+        this._deselectChildren(child.getChildren(), selected);
+      }
+    });
   }
 
   _onToggle(e) {
@@ -101,6 +128,54 @@ class RumoTree extends PolymerElement {
     const data = target.data;
 
     target.setOpen(data.open, data.children);
+  }
+
+  _addSelected(key, value) {
+    const object = {
+      key,
+      value,
+    };
+
+    this.push('selected', object);
+  }
+
+  _removeSelected(target, selected) {
+    const findTargetIn = R.findIndex(R.propEq('key', target));
+    const index = findTargetIn(selected);
+
+    const isSelected = !!~index;
+
+    if (isSelected) {
+      this._removeSelection(selected, index);
+      this.splice('selected', index, 1);
+    }
+  }
+
+  _addSelection(selected) {
+    const addClass = R.curry((node, className) =>
+      node.classList.add(className)
+    );
+    const addClassMarked = addClass(R.__, 'marked');
+    const addClassSelected = addClass(R.__, 'selected');
+
+    selected.forEach(node => {
+      addClassSelected(node.key);
+      R.forEach(addClassMarked, node.value);
+    });
+  }
+
+  _removeSelection(selected, index) {
+    const removeClass = R.curry((node, className) =>
+      node.classList.remove(className)
+    );
+
+    const removeClassMarked = removeClass(R.__, 'marked');
+    const removeClassSelected = removeClass(R.__, 'selected');
+
+    // Remove the selected class from target
+    removeClassSelected(selected[index].key);
+    // Remove the marked class from target ancestors
+    R.forEach(removeClassMarked, selected[index].value);
   }
 
   static get template() {
