@@ -1,4 +1,4 @@
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { LitElement, html } from '@polymer/lit-element';
 
 import './rumo-tree-item';
 
@@ -14,27 +14,24 @@ const containsClass = R.curry((node, className) =>
 const containsClassMarked = containsClass(R.__, 'marked');
 const containsClassSelected = containsClass(R.__, 'selected');
 
-class RumoTree extends PolymerElement {
+class RumoTree extends LitElement {
   static get properties() {
     return {
-      data: {
-        type: Object,
-        value() {
-          return {
-            icon: 'folder',
-            name: 'Loading…',
-            root: true,
-          };
-        },
-        observer: '_onDataChange',
-      },
-      selected: {
-        type: Array,
-        value() {
-          return [];
-        },
-      },
+      data: Object,
+      selected: Array,
     };
+  }
+
+  constructor() {
+    super();
+
+    this.data = {
+      icon: 'folder',
+      name: 'Loading…',
+      root: true,
+    };
+
+    this.selected = [];
   }
 
   ready() {
@@ -42,10 +39,6 @@ class RumoTree extends PolymerElement {
 
     this.addEventListener('select', this._onSelect);
     this.addEventListener('toggle', this._onToggle);
-  }
-
-  _onDataChange() {
-    this.$.root.data = this.data;
   }
 
   _onSelect(e) {
@@ -136,7 +129,7 @@ class RumoTree extends PolymerElement {
       value,
     };
 
-    this.push('selected', object);
+    this.selected.push(object);
   }
 
   _removeSelected(target, selected) {
@@ -147,7 +140,7 @@ class RumoTree extends PolymerElement {
 
     if (isSelected) {
       this._removeSelection(selected[index]);
-      this.splice('selected', index, 1);
+      this.selected.splice(index, 1);
     }
   }
 
@@ -176,7 +169,7 @@ class RumoTree extends PolymerElement {
     R.forEach(removeClassMarked, target.value);
   }
 
-  static get template() {
+  _render({ data }) {
     return html`
       <style>
         :host {
@@ -184,7 +177,7 @@ class RumoTree extends PolymerElement {
         }
       </style>
 
-      <rumo-tree-item id="root" data="[[data]]"></rumo-tree-item>
+      <rumo-tree-item id="root" data="${data}"></rumo-tree-item>
     `;
   }
 }
