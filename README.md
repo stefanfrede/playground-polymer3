@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/stefanfrede/playground-polymer3.svg?branch=master)](https://travis-ci.org/stefanfrede/playground-polymer3)
 
-# \<rumo-tree\>
+# \<monkey-tree\>
 
 Simple Polymer 3 tree component
 

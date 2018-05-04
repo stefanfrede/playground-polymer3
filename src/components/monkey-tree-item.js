@@ -9,7 +9,7 @@ import '@polymer/iron-icons/iron-icons.js';
 
 import * as R from 'ramda';
 
-class RumoTreeItem extends PolymerElement {
+class MonkeyTreeItem extends PolymerElement {
   static get properties() {
     return {
       data: {
@@ -82,7 +82,7 @@ class RumoTreeItem extends PolymerElement {
   }
 
   getChildren() {
-    return this.shadowRoot.querySelectorAll('rumo-tree-item');
+    return this.shadowRoot.querySelectorAll('monkey-tree-item');
   }
 
   static get template() {
@@ -247,7 +247,7 @@ class RumoTreeItem extends PolymerElement {
       <template is="dom-if" if="{{data.open}}">
         <div class="node__children-container">
           <template is="dom-repeat" items="{{data.children}}">
-            <rumo-tree-item data="{{item}}"></rumo-tree-item>
+            <monkey-tree-item data="{{item}}"></monkey-tree-item>
           </template>
         </div>
       </template>
@@ -256,4 +256,4 @@ class RumoTreeItem extends PolymerElement {
 }
 
 // Register the element with the browser.
-window.customElements.define('rumo-tree-item', RumoTreeItem);
+window.customElements.define('monkey-tree-item', MonkeyTreeItem);

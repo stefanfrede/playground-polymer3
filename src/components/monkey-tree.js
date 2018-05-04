@@ -1,6 +1,6 @@
 import { LitElement, html } from '@polymer/lit-element';
 
-import './rumo-tree-item';
+import './monkey-tree-item';
 
 import * as R from 'ramda';
 
@@ -14,7 +14,7 @@ const containsClass = R.curry((node, className) =>
 const containsClassMarked = containsClass(R.__, 'marked');
 const containsClassSelected = containsClass(R.__, 'selected');
 
-class RumoTree extends LitElement {
+class MonkeyTree extends LitElement {
   static get properties() {
     return {
       data: Object,
@@ -42,7 +42,7 @@ class RumoTree extends LitElement {
   }
 
   _onSelect(e) {
-    const isTreeItem = node => node.tagName === 'RUMO-TREE-ITEM';
+    const isTreeItem = node => node.tagName === 'MONKEY-TREE-ITEM';
 
     const target = e.detail;
     const isNotTarget = R.compose(R.not, R.equals(target));
@@ -177,10 +177,10 @@ class RumoTree extends LitElement {
         }
       </style>
 
-      <rumo-tree-item id="root" data="${data}"></rumo-tree-item>
+      <monkey-tree-item id="root" data="${data}"></monkey-tree-item>
     `;
   }
 }
 
 // Register the element with the browser.
-window.customElements.define('rumo-tree', RumoTree);
+window.customElements.define('monkey-tree', MonkeyTree);

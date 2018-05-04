@@ -2,7 +2,7 @@
   "name": "playground-polymer3",
   "version": "1.0.0",
   "description": "Simple Polymer 3 tree component",
-  "main": "rumo-tree.js",
+  "main": "monkey-tree.js",
   "scripts": {
     "precommit": "lint-staged",
     "lint": "npm run lint:javascript && npm run lint:polymer",
