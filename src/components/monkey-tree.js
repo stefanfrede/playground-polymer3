@@ -28,7 +28,9 @@ class MonkeyTree extends LitElement {
     this.data = {
       icon: 'folder',
       name: 'Loading…',
+      opened: false,
       root: true,
+      selected: false,
     };
 
     this.selected = [];
@@ -37,8 +39,8 @@ class MonkeyTree extends LitElement {
   ready() {
     super.ready();
 
-    this.addEventListener('select', this._onSelect);
-    this.addEventListener('toggle', this._onToggle);
+    this.addEventListener('selectNode', this._onSelect);
+    this.addEventListener('toggleNode', this._onToggle);
   }
 
   _onSelect(e) {
@@ -56,7 +58,7 @@ class MonkeyTree extends LitElement {
         this._removeSelected(target, this.selected);
       } else {
         if (containsClassMarked(target)) {
-          this._deselectChildren(target.getChildren(), this.selected);
+          this._deselectChildren(target.domChildren, this.selected);
         }
 
         const [selectedAncestor] = R.filter(containsClassSelected, ancestors);
@@ -64,7 +66,7 @@ class MonkeyTree extends LitElement {
         if (isNotNil(selectedAncestor)) {
           this._removeSelected(selectedAncestor, this.selected);
           this._deselectChild(
-            Array.from(selectedAncestor.getChildren()),
+            Array.from(selectedAncestor.domChildren),
             selectedAncestor,
             ancestors,
             target
@@ -82,9 +84,11 @@ class MonkeyTree extends LitElement {
 
   _onToggle(e) {
     const target = e.detail;
-    const data = target.data;
+    const hasChildren = target.hasChildren;
+    const opened = target.opened;
+    const newOpened = R.and(R.not(opened), hasChildren);
 
-    target.setOpen(data.open, data.children);
+    target.opened = newOpened;
   }
 
   _deselectChild(children, parent, ancestors, target) {
@@ -94,7 +98,7 @@ class MonkeyTree extends LitElement {
       const hasSelected = !!~index;
 
       if (hasSelected) {
-        this._deselectChild(child.getChildren(), child, ancestors, target);
+        this._deselectChild(child.domChildren, child, ancestors, target);
       } else {
         if (R.not(R.equals(child, target))) {
           const findParentIn = R.findIndex(R.equals(parent));
@@ -118,7 +122,7 @@ class MonkeyTree extends LitElement {
       }
 
       if (hasChildren(child.data)) {
-        this._deselectChildren(child.getChildren(), selected);
+        this._deselectChildren(child.domChildren, selected);
       }
     });
   }
