@@ -1,5 +1,5 @@
 {
-  "name": "playground-polymer3",
+  "name": "monkey-tree",
   "version": "1.0.0",
   "description": "Simple Polymer 3 tree component",
   "main": "monkey-tree.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:stefanfrede/playground-polymer3.git"
+    "url": "git@github.com:stefanfrede/monkey-tree.git"
   },
   "keywords": [
     "polymer",
@@ -31,9 +31,9 @@
   "author": "Stefan Frede <public@frede.biz>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/stefanfrede/playground-polymer3/issues"
+    "url": "https://github.com/stefanfrede/monkey-tree/issues"
   },
-  "homepage": "https://github.com/stefanfrede/playground-polymer3#readme",
+  "homepage": "https://github.com/stefanfrede/monkey-tree#readme",
   "dependencies": {
     "@polymer/lit-element": "^0.5.0",
     "@polymer/polymer": "^3.0.0-pre.13",

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/stefanfrede/playground-polymer3.svg?branch=master)](https://travis-ci.org/stefanfrede/playground-polymer3)
+[![Build Status](https://travis-ci.org/stefanfrede/monkey-tree.svg?branch=master)](https://travis-ci.org/stefanfrede/monkey-tree)
 
 # \<monkey-tree\>
 
