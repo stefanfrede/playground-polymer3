@@ -1,6 +1,6 @@
-import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { LitElement, html } from '@polymer/lit-element';
 
-import './rumo-tree-item';
+import './monkey-tree-item';
 
 import * as R from 'ramda';
 
@@ -14,42 +14,37 @@ const containsClass = R.curry((node, className) =>
 const containsClassMarked = containsClass(R.__, 'marked');
 const containsClassSelected = containsClass(R.__, 'selected');
 
-class RumoTree extends PolymerElement {
+class MonkeyTree extends LitElement {
   static get properties() {
     return {
-      data: {
-        type: Object,
-        value() {
-          return {
-            icon: 'folder',
-            name: 'Loading…',
-            root: true,
-          };
-        },
-        observer: '_onDataChange',
-      },
-      selected: {
-        type: Array,
-        value() {
-          return [];
-        },
-      },
+      data: Object,
+      selected: Array,
     };
+  }
+
+  constructor() {
+    super();
+
+    this.data = {
+      icon: 'folder',
+      name: 'Loading…',
+      opened: false,
+      root: true,
+      selected: false,
+    };
+
+    this.selected = [];
   }
 
   ready() {
     super.ready();
 
-    this.addEventListener('select', this._onSelect);
-    this.addEventListener('toggle', this._onToggle);
-  }
-
-  _onDataChange() {
-    this.$.root.data = this.data;
+    this.addEventListener('selectNode', this._onSelect);
+    this.addEventListener('toggleNode', this._onToggle);
   }
 
   _onSelect(e) {
-    const isTreeItem = node => node.tagName === 'RUMO-TREE-ITEM';
+    const isTreeItem = node => node.tagName === 'MONKEY-TREE-ITEM';
 
     const target = e.detail;
     const isNotTarget = R.compose(R.not, R.equals(target));
@@ -63,7 +58,7 @@ class RumoTree extends PolymerElement {
         this._removeSelected(target, this.selected);
       } else {
         if (containsClassMarked(target)) {
-          this._deselectChildren(target.getChildren(), this.selected);
+          this._deselectChildren(target.domChildren, this.selected);
         }
 
         const [selectedAncestor] = R.filter(containsClassSelected, ancestors);
@@ -71,7 +66,7 @@ class RumoTree extends PolymerElement {
         if (isNotNil(selectedAncestor)) {
           this._removeSelected(selectedAncestor, this.selected);
           this._deselectChild(
-            Array.from(selectedAncestor.getChildren()),
+            Array.from(selectedAncestor.domChildren),
             selectedAncestor,
             ancestors,
             target
@@ -89,9 +84,11 @@ class RumoTree extends PolymerElement {
 
   _onToggle(e) {
     const target = e.detail;
-    const data = target.data;
+    const hasChildren = target.hasChildren;
+    const opened = target.opened;
+    const newOpened = R.and(R.not(opened), hasChildren);
 
-    target.setOpen(data.open, data.children);
+    target.opened = newOpened;
   }
 
   _deselectChild(children, parent, ancestors, target) {
@@ -101,7 +98,7 @@ class RumoTree extends PolymerElement {
       const hasSelected = !!~index;
 
       if (hasSelected) {
-        this._deselectChild(child.getChildren(), child, ancestors, target);
+        this._deselectChild(child.domChildren, child, ancestors, target);
       } else {
         if (R.not(R.equals(child, target))) {
           const findParentIn = R.findIndex(R.equals(parent));
@@ -125,7 +122,7 @@ class RumoTree extends PolymerElement {
       }
 
       if (hasChildren(child.data)) {
-        this._deselectChildren(child.getChildren(), selected);
+        this._deselectChildren(child.domChildren, selected);
       }
     });
   }
@@ -136,7 +133,7 @@ class RumoTree extends PolymerElement {
       value,
     };
 
-    this.push('selected', object);
+    this.selected.push(object);
   }
 
   _removeSelected(target, selected) {
@@ -147,7 +144,7 @@ class RumoTree extends PolymerElement {
 
     if (isSelected) {
       this._removeSelection(selected[index]);
-      this.splice('selected', index, 1);
+      this.selected.splice(index, 1);
     }
   }
 
@@ -176,7 +173,7 @@ class RumoTree extends PolymerElement {
     R.forEach(removeClassMarked, target.value);
   }
 
-  static get template() {
+  _render({ data }) {
     return html`
       <style>
         :host {
@@ -184,10 +181,10 @@ class RumoTree extends PolymerElement {
         }
       </style>
 
-      <rumo-tree-item id="root" data="[[data]]"></rumo-tree-item>
+      <monkey-tree-item id="root" data="${data}"></monkey-tree-item>
     `;
   }
 }
 
 // Register the element with the browser.
-window.customElements.define('rumo-tree', RumoTree);
+window.customElements.define('monkey-tree', MonkeyTree);
