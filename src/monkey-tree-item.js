@@ -21,8 +21,9 @@ class MonkeyTreeItem extends LitElement {
   static get properties() {
     return {
       data: Object,
-      _nodeOpened: Boolean,
-      _nodeSelected: Boolean,
+      _opened: Boolean,
+      _marked: Boolean,
+      _selected: Boolean,
     };
   }
 
@@ -38,16 +39,23 @@ class MonkeyTreeItem extends LitElement {
       : [];
   }
 
-  get hasChildren() {
-    return isNotEmpty(this.children);
+  get id() {
+    return isNotNilOrEmpty(this.data.id)
+      ? this.data.id
+      : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+          (
+            c ^
+            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+          ).toString(16)
+        );
   }
 
-  get icon() {
-    return this.hasChildren
-      ? this.opened
-        ? folderOpenIcon
-        : folderIcon
-      : fileIcon;
+  get name() {
+    return isNotNil(this.data)
+      ? isNotNilOrEmpty(this.data.name)
+        ? this.data.name
+        : 'Loading…'
+      : 'Loading…';
   }
 
   get opened() {
@@ -61,30 +69,25 @@ class MonkeyTreeItem extends LitElement {
       : false;
   }
 
-  set opened(newOpened) {
-    this.data.opened = newOpened;
-    this._nodeOpened = newOpened;
-  }
-
-  get name() {
-    return isNotNil(this.data)
-      ? isNotNilOrEmpty(this.data.name)
-        ? this.data.name
-        : ''
-      : '';
-  }
-
-  get nodeId() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-      (
-        c ^
-        (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-      ).toString(16)
-    );
+  set opened(opened) {
+    this.data.opened = opened;
+    this._opened = opened;
   }
 
   get selected() {
-    return !!this.data.selected;
+    return isNotNil(this.data)
+      ? R.and(
+          isNotNilOrEmpty(this.data.selected),
+          R.equals(this.data.selected, true)
+        )
+        ? true
+        : false
+      : false;
+  }
+
+  set selected(selected) {
+    this.data.selected = selected;
+    this._selected = selected;
   }
 
   _selectNode() {
@@ -111,20 +114,8 @@ class MonkeyTreeItem extends LitElement {
     return style;
   }
 
-  _renderButton() {
-    if (this.hasChildren) {
-      return html`
-        <button class="btn" on-click="${() => this._toggleNode()}">
-          <span class="btn__icon btn__icon--small">
-            ${this.opened ? minusIcon : plusIcon}
-          </span>
-        </button>
-      `;
-    }
-  }
-
   _renderList() {
-    if (R.and(this.opened, this.hasChildren)) {
+    if (R.and(this.opened, isNotEmpty(this.children))) {
       return html`
         <ul role="group">
           ${this.data.children.map(
@@ -144,7 +135,41 @@ class MonkeyTreeItem extends LitElement {
     }
   }
 
-  _render({ _nodeOpened, _nodeSelected }) {
+  _renderSelectionButton() {
+    return html`
+      <button class="btn" on-click="${() => this._selectNode()}">
+        <span
+          class$="btn__icon btn__icon--type ${
+            R.isEmpty(this.children) ? 'btn__icon--smaller' : ''
+          }">
+          ${
+            isNotEmpty(this.children)
+              ? this.opened
+                ? folderOpenIcon
+                : folderIcon
+              : fileIcon
+          }
+        </span>
+        <span>
+          ${this.name}
+        </span>
+      </button>
+    `;
+  }
+
+  _renderToggleButton() {
+    if (isNotEmpty(this.children)) {
+      return html`
+        <button class="btn" on-click="${() => this._toggleNode()}">
+          <span class="btn__icon btn__icon--small">
+            ${this.opened ? minusIcon : plusIcon}
+          </span>
+        </button>
+      `;
+    }
+  }
+
+  _render({ _marked, _opened, _selected }) {
     return html`
       ${this._renderStyle()}
       <ul role="tree">
@@ -155,21 +180,9 @@ class MonkeyTreeItem extends LitElement {
           aria-posinset="1">
           <div class="row">
             <div class="btn__placeholder">
-              ${this._renderButton()}
+              ${this._renderToggleButton()}
             </div>
-            <button class="btn" on-click="${() => this._selectNode()}">
-              <span
-                class$="${
-                  this.hasChildren
-                    ? 'btn__icon btn__icon--type'
-                    : 'btn__icon btn__icon--type btn__icon--smaller'
-                }">
-                ${this.icon}
-              </span>
-              <span>
-                ${this.name}
-              </span>
-            </button>
+            ${this._renderSelectionButton()}
           </div>
           ${this._renderList()}
         </li>

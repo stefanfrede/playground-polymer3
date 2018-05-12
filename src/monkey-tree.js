@@ -13,6 +13,7 @@ const containsClass = R.curry((node, className) =>
 
 const containsClassMarked = containsClass(R.__, 'marked');
 const containsClassSelected = containsClass(R.__, 'selected');
+const isNotNilOrEmpty = R.both(isNotEmpty, isNotNil);
 
 class MonkeyTree extends LitElement {
   static get properties() {
@@ -25,14 +26,7 @@ class MonkeyTree extends LitElement {
   constructor() {
     super();
 
-    this.data = {
-      icon: 'folder',
-      name: 'Loading…',
-      opened: false,
-      root: true,
-      selected: false,
-    };
-
+    this.data = {};
     this.selected = [];
   }
 
@@ -44,6 +38,8 @@ class MonkeyTree extends LitElement {
   }
 
   _onSelect(e) {
+    e.stopPropagation();
+
     const isTreeItem = node => node.tagName === 'MONKEY-TREE-ITEM';
 
     const target = e.detail;
@@ -83,12 +79,10 @@ class MonkeyTree extends LitElement {
   }
 
   _onToggle(e) {
-    const target = e.detail;
-    const hasChildren = target.hasChildren;
-    const opened = target.opened;
-    const newOpened = R.and(R.not(opened), hasChildren);
+    e.stopPropagation();
 
-    target.opened = newOpened;
+    const target = e.detail;
+    target.opened = !target.opened;
   }
 
   _deselectChild(children, parent, ancestors, target) {
@@ -133,6 +127,7 @@ class MonkeyTree extends LitElement {
       value,
     };
 
+    key.selected = true;
     this.selected.push(object);
   }
 
@@ -143,6 +138,7 @@ class MonkeyTree extends LitElement {
     const isSelected = !!~index;
 
     if (isSelected) {
+      target.selected = false;
       this._removeSelection(selected[index]);
       this.selected.splice(index, 1);
     }
@@ -181,7 +177,7 @@ class MonkeyTree extends LitElement {
         }
       </style>
 
-      <monkey-tree-item id="root" data="${data}"></monkey-tree-item>
+      <monkey-tree-item data="${data}"></monkey-tree-item>
     `;
   }
 }
