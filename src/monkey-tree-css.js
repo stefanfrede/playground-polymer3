@@ -52,34 +52,6 @@ export const style = html`
       display: inline-block;
     }
 
-    :host .btn {
-      color: var(--primary-darker);
-    }
-
-    :host .btn__placeholder .btn__icon > svg,
-    :host .btn__icon--type > svg {
-      fill: var(--primary);
-    }
-
-    :host .btn:hover,
-    :host(.selected) .btn {
-      color: var(--secondary-darker);
-    }
-
-    :host .btn__placeholder .btn:hover .btn__icon > svg,
-    :host .btn:hover .btn__icon--type > svg ,
-    :host(.selected) .btn__icon--type > svg {
-      fill: var(--secondary) !important;
-    }
-
-    :host(.marked) > [role="tree"] > [role="treeitem"] > .row {
-      color: var(--primary-lighter);
-    }
-
-    :host(.marked) > [role="tree"] > [role="treeitem"] > .row .btn__icon--type > svg {
-      fill: var(--primary-lighter);
-    }
-
     [role="tree"],
     [role="group"] {
       list-style: none;
@@ -96,15 +68,35 @@ export const style = html`
       flex-direction: column;
     }
 
+    [role="tree"].marked > [role="treeitem"] > .row > .btn > span {
+      color: var(--primary-lighter);
+    }
+
+    [role="tree"].marked > [role="treeitem"] > .row > .btn > .btn__icon--type > svg {
+      fill: var(--primary-lighter);
+    }
+
     .row {
       display: flex;
     }
 
     .btn {
       align-items: center;
+      color: var(--primary-darker);
       cursor: pointer;
       display: flex;
       transition: color 0.25s ease-out;
+    }
+
+    .btn:hover,
+    .selected .btn {
+      color: var(--secondary-darker);
+    }
+
+    .btn:hover svg,
+    .selected .btn svg {
+      color: var(--secondary-darker);
+      fill: var(--secondary);
     }
 
     .btn__icon,
@@ -125,6 +117,7 @@ export const style = html`
     }
 
     .btn__icon > svg {
+      fill: var(--primary);
       transition: fill 0.25s ease-out;
     }
 

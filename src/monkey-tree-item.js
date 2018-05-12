@@ -26,16 +26,15 @@ class MonkeyTreeItem extends LitElement {
     await afterNextRender();
   }
 
-  get domChildren() {
-    return this.shadowRoot.querySelectorAll('monkey-tree-item');
-  }
-
   get children() {
     const defaultValue = [];
 
     return isNotNil(this.data)
       ? R.and(isNotNilOrEmpty(this.data.children), R.is(Array))
-        ? this.data.children
+        ? {
+            data: this.data.children,
+            dom: this.shadowRoot.querySelectorAll('monkey-tree-item'),
+          }
         : defaultValue
       : defaultValue;
   }
@@ -69,6 +68,24 @@ class MonkeyTreeItem extends LitElement {
         ? this.data.id
         : defaultValue
       : defaultValue;
+  }
+
+  get marked() {
+    const defaultValue = false;
+
+    return isNotNil(this.data)
+      ? R.and(
+          isNotNilOrEmpty(this.data.marked),
+          R.equals(this.data.marked, true)
+        )
+        ? true
+        : defaultValue
+      : defaultValue;
+  }
+
+  set marked(marked) {
+    this.data.marked = marked;
+    this._marked = marked;
   }
 
   get name() {
@@ -145,7 +162,7 @@ class MonkeyTreeItem extends LitElement {
     if (R.and(this.opened, isNotEmpty(this.children))) {
       return html`
         <ul role="group">
-          ${this.data.children.map(
+          ${this.children.data.map(
             (child, index, array) =>
               html`
                 <li
@@ -194,7 +211,9 @@ class MonkeyTreeItem extends LitElement {
   _render({ _marked, _opened, _selected }) {
     return html`
       ${this._renderStyle()}
-      <ul role="tree">
+      <ul role="tree" class$="${
+        this.selected ? 'selected' : this.marked ? 'marked' : ''
+      }">
         <li
           role="treeitem"
           aria-level="1"

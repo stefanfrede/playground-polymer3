@@ -19,7 +19,7 @@ class MonkeyTree extends LitElement {
   static get properties() {
     return {
       data: Object,
-      selected: Array,
+      model: Array,
     };
   }
 
@@ -27,7 +27,7 @@ class MonkeyTree extends LitElement {
     super();
 
     this.data = {};
-    this.selected = [];
+    this.model = [];
   }
 
   ready() {
@@ -50,19 +50,19 @@ class MonkeyTree extends LitElement {
     const ancestors = R.filter(isNotTarget, R.filter(isTreeItem, path));
 
     if (isValidTarget(target)) {
-      if (containsClassSelected(target)) {
-        this._removeSelected(target, this.selected);
+      if (target.data.selected) {
+        this._removeSelected(target, this.model);
       } else {
-        if (containsClassMarked(target)) {
-          this._deselectChildren(target.domChildren, this.selected);
+        if (target.data.marked) {
+          this._deselectChildren(target.children.dom, this.model);
         }
 
-        const [selectedAncestor] = R.filter(containsClassSelected, ancestors);
+        const [selectedAncestor] = R.filter(R.prop('selected'), ancestors);
 
         if (isNotNil(selectedAncestor)) {
-          this._removeSelected(selectedAncestor, this.selected);
+          this._removeSelected(selectedAncestor, this.model);
           this._deselectChild(
-            Array.from(selectedAncestor.domChildren),
+            Array.from(selectedAncestor.children.dom),
             selectedAncestor,
             ancestors,
             target
@@ -72,8 +72,16 @@ class MonkeyTree extends LitElement {
         }
       }
 
-      if (isNotEmpty(this.selected)) {
-        R.forEach(this._addSelection, this.selected);
+      if (isNotEmpty(this.model)) {
+        const set = new Set();
+
+        this.model.forEach(node => {
+          set.add(...node.value);
+        });
+
+        for (const node of set) {
+          node.marked = true;
+        }
       }
     }
   }
@@ -92,7 +100,7 @@ class MonkeyTree extends LitElement {
       const hasSelected = !!~index;
 
       if (hasSelected) {
-        this._deselectChild(child.domChildren, child, ancestors, target);
+        this._deselectChild(child.children.dom, child, ancestors, target);
       } else {
         if (R.not(R.equals(child, target))) {
           const findParentIn = R.findIndex(R.equals(parent));
@@ -105,30 +113,25 @@ class MonkeyTree extends LitElement {
   }
 
   _deselectChildren(children, selected) {
-    const hasChildren = R.compose(
-      R.both(isNotNil, isNotEmpty),
-      R.prop('children')
-    );
-
     children.forEach(child => {
-      if (containsClassSelected(child)) {
+      if (child.selected) {
         this._removeSelected(child, selected);
       }
 
-      if (hasChildren(child.data)) {
-        this._deselectChildren(child.domChildren, selected);
+      if (isNotNilOrEmpty(child.data.children)) {
+        this._deselectChildren(child.children.dom, selected);
       }
     });
   }
 
-  _addSelected(key, value) {
+  _addSelected(target, ancestors) {
     const object = {
-      key,
-      value,
+      key: target,
+      value: ancestors,
     };
 
-    key.selected = true;
-    this.selected.push(object);
+    target.selected = true;
+    this.model.push(object);
   }
 
   _removeSelected(target, selected) {
@@ -138,35 +141,15 @@ class MonkeyTree extends LitElement {
     const isSelected = !!~index;
 
     if (isSelected) {
+      const ancestors = selected[index].value;
+
+      if (isNotEmpty(ancestors)) {
+        ancestors.forEach(ancestor => (ancestor.marked = false));
+      }
+
       target.selected = false;
-      this._removeSelection(selected[index]);
-      this.selected.splice(index, 1);
+      this.model.splice(index, 1);
     }
-  }
-
-  _addSelection(target) {
-    const addClass = R.curry((node, className) =>
-      node.classList.add(className)
-    );
-    const addClassMarked = addClass(R.__, 'marked');
-    const addClassSelected = addClass(R.__, 'selected');
-
-    addClassSelected(target.key);
-    R.forEach(addClassMarked, target.value);
-  }
-
-  _removeSelection(target) {
-    const removeClass = R.curry((node, className) =>
-      node.classList.remove(className)
-    );
-
-    const removeClassMarked = removeClass(R.__, 'marked');
-    const removeClassSelected = removeClass(R.__, 'selected');
-
-    // Remove the selected class from target
-    removeClassSelected(target.key);
-    // Remove the marked class from target ancestors
-    R.forEach(removeClassMarked, target.value);
   }
 
   _render({ data }) {
