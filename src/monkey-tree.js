@@ -80,7 +80,9 @@ class MonkeyTree extends LitElement {
         });
 
         for (const node of set) {
-          node.marked = true;
+          if (isNotNil(node)) {
+            node.marked = true;
+          }
         }
       }
     }

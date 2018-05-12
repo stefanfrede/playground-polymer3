@@ -182,7 +182,7 @@ class MonkeyTreeItem extends LitElement {
   _renderSelectionButton() {
     return html`
       <button class="btn" on-click="${() => this._selectNode()}">
-        <span class="btn__icon btn__icon--type">
+        <span class="btn__icon">
           <mwc-icon>${this.icon}</mwc-icon>
         </span>
         <span>
@@ -196,7 +196,7 @@ class MonkeyTreeItem extends LitElement {
     if (isNotEmpty(this.children)) {
       return html`
         <button class="btn" on-click="${() => this._toggleNode()}">
-          <span class="btn__icon btn__icon--small">
+          <span class="btn__icon">
             ${
               this.opened
                 ? html`<mwc-icon>remove</mwc-icon>`
@@ -220,9 +220,7 @@ class MonkeyTreeItem extends LitElement {
           aria-setsize="1"
           aria-posinset="1">
           <div class="row">
-            <div class="btn__placeholder">
-              ${this._renderToggleButton()}
-            </div>
+            ${this._renderToggleButton()}
             ${this._renderSelectionButton()}
           </div>
           ${this._renderList()}
