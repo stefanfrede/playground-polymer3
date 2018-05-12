@@ -31,15 +31,31 @@ class MonkeyTreeItem extends LitElement {
   }
 
   get children() {
+    const defaultValue = [];
+
     return isNotNil(this.data)
       ? R.and(isNotNilOrEmpty(this.data.children), R.is(Array))
         ? this.data.children
-        : []
-      : [];
+        : defaultValue
+      : defaultValue;
+  }
+
+  get icon() {
+    const defaultValue = 'description';
+
+    return isNotNil(this.data)
+      ? isNotNilOrEmpty(this.data.icon)
+        ? this.data.icon
+        : isNotNilOrEmpty(this.data.children)
+          ? this.data.opened
+            ? 'folder_open'
+            : 'folder'
+          : defaultValue
+      : defaultValue;
   }
 
   get id() {
-    const randomId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
+    const defaultValue = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
       /[018]/g,
       c =>
         (
@@ -51,27 +67,31 @@ class MonkeyTreeItem extends LitElement {
     return isNotNilOrEmpty(this.data)
       ? isNotNilOrEmpty(this.data.id)
         ? this.data.id
-        : randomId
-      : randomId;
+        : defaultValue
+      : defaultValue;
   }
 
   get name() {
+    const defaultValue = 'Loading…';
+
     return isNotNil(this.data)
       ? isNotNilOrEmpty(this.data.name)
         ? this.data.name
-        : 'Loading…'
-      : 'Loading…';
+        : defaultValue
+      : defaultValue;
   }
 
   get opened() {
+    const defaultValue = false;
+
     return isNotNil(this.data)
       ? R.and(
           isNotNilOrEmpty(this.data.opened),
           R.equals(this.data.opened, true)
         )
         ? true
-        : false
-      : false;
+        : defaultValue
+      : defaultValue;
   }
 
   set opened(opened) {
@@ -80,14 +100,16 @@ class MonkeyTreeItem extends LitElement {
   }
 
   get selected() {
+    const defaultValue = false;
+
     return isNotNil(this.data)
       ? R.and(
           isNotNilOrEmpty(this.data.selected),
           R.equals(this.data.selected, true)
         )
         ? true
-        : false
-      : false;
+        : defaultValue
+      : defaultValue;
   }
 
   set selected(selected) {
@@ -144,13 +166,7 @@ class MonkeyTreeItem extends LitElement {
     return html`
       <button class="btn" on-click="${() => this._selectNode()}">
         <span class="btn__icon btn__icon--type">
-          ${
-            isNotEmpty(this.children)
-              ? this.opened
-                ? html`<mwc-icon>folder_open</mwc-icon>`
-                : html`<mwc-icon>folder</mwc-icon>`
-              : html`<mwc-icon>description</mwc-icon>`
-          }
+          <mwc-icon>${this.icon}</mwc-icon>
         </span>
         <span>
           ${this.name}
