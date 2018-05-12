@@ -35,6 +35,8 @@
   },
   "homepage": "https://github.com/stefanfrede/monkey-tree#readme",
   "dependencies": {
+    "@material/mwc-base": "^0.1.0",
+    "@material/mwc-icon": "^0.1.1",
     "@polymer/lit-element": "^0.5.1",
     "@polymer/polymer": "^3.0.2",
     "ramda": "^0.25.0"

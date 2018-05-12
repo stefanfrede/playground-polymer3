@@ -1,17 +1,10 @@
 import { LitElement, html } from '@polymer/lit-element';
 
-import * as R from 'ramda';
-
-import {
-  fileIcon,
-  folderIcon,
-  folderOpenIcon,
-  minusIcon,
-  plusIcon,
-  spinnerIcon,
-} from './monkey-tree-icons.js';
-
 import { style } from './monkey-tree-css.js';
+import { afterNextRender } from '@material/mwc-base/utils.js';
+import { Icon } from '@material/mwc-icon';
+
+import * as R from 'ramda';
 
 const isNotEmpty = R.complement(R.isEmpty);
 const isNotNil = R.complement(R.isNil);
@@ -27,6 +20,12 @@ class MonkeyTreeItem extends LitElement {
     };
   }
 
+  async ready() {
+    super.ready();
+
+    await afterNextRender();
+  }
+
   get domChildren() {
     return this.shadowRoot.querySelectorAll('monkey-tree-item');
   }
@@ -40,14 +39,20 @@ class MonkeyTreeItem extends LitElement {
   }
 
   get id() {
-    return isNotNilOrEmpty(this.data.id)
-      ? this.data.id
-      : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-          (
-            c ^
-            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-          ).toString(16)
-        );
+    const randomId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
+      /[018]/g,
+      c =>
+        (
+          c ^
+          (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+        ).toString(16)
+    );
+
+    return isNotNilOrEmpty(this.data)
+      ? isNotNilOrEmpty(this.data.id)
+        ? this.data.id
+        : randomId
+      : randomId;
   }
 
   get name() {
@@ -138,16 +143,13 @@ class MonkeyTreeItem extends LitElement {
   _renderSelectionButton() {
     return html`
       <button class="btn" on-click="${() => this._selectNode()}">
-        <span
-          class$="btn__icon btn__icon--type ${
-            R.isEmpty(this.children) ? 'btn__icon--smaller' : ''
-          }">
+        <span class="btn__icon btn__icon--type">
           ${
             isNotEmpty(this.children)
               ? this.opened
-                ? folderOpenIcon
-                : folderIcon
-              : fileIcon
+                ? html`<mwc-icon>folder_open</mwc-icon>`
+                : html`<mwc-icon>folder</mwc-icon>`
+              : html`<mwc-icon>description</mwc-icon>`
           }
         </span>
         <span>
@@ -162,7 +164,11 @@ class MonkeyTreeItem extends LitElement {
       return html`
         <button class="btn" on-click="${() => this._toggleNode()}">
           <span class="btn__icon btn__icon--small">
-            ${this.opened ? minusIcon : plusIcon}
+            ${
+              this.opened
+                ? html`<mwc-icon>remove</mwc-icon>`
+                : html`<mwc-icon>add</mwc-icon>`
+            }
           </span>
         </button>
       `;
