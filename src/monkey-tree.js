@@ -73,17 +73,12 @@ class MonkeyTree extends LitElement {
       }
 
       if (isNotEmpty(this.model)) {
-        const set = new Set();
-
-        this.model.forEach(node => {
-          set.add(...node.value);
-        });
-
-        for (const node of set) {
-          if (isNotNil(node)) {
-            node.marked = true;
-          }
-        }
+        R.forEach(
+          node => (node.marked = true),
+          R.uniq(
+            R.reduce((acc, node) => [...acc, ...node.value], [], this.model)
+          )
+        );
       }
     }
   }

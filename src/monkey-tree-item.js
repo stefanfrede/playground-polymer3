@@ -1,7 +1,6 @@
 import { LitElement, html } from '@polymer/lit-element';
 
 import { style } from './monkey-tree-css.js';
-import { afterNextRender } from '@material/mwc-base/utils.js';
 import { Icon } from '@material/mwc-icon';
 
 import * as R from 'ramda';
@@ -18,12 +17,6 @@ class MonkeyTreeItem extends LitElement {
       _marked: Boolean,
       _selected: Boolean,
     };
-  }
-
-  async ready() {
-    super.ready();
-
-    await afterNextRender();
   }
 
   get children() {
