@@ -3,17 +3,7 @@ import { LitElement, html } from '@polymer/lit-element';
 import './monkey-tree-item';
 
 import * as R from 'ramda';
-
-const isNotEmpty = R.complement(R.isEmpty);
-const isNotNil = R.complement(R.isNil);
-
-const containsClass = R.curry((node, className) =>
-  node.classList.contains(className)
-);
-
-const containsClassMarked = containsClass(R.__, 'marked');
-const containsClassSelected = containsClass(R.__, 'selected');
-const isNotNilOrEmpty = R.both(isNotEmpty, isNotNil);
+import { isNotEmpty, isNotNil, isNotNilOrEmpty } from './monkey-tree-utils';
 
 class MonkeyTree extends LitElement {
   static get properties() {

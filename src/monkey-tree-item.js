@@ -4,10 +4,7 @@ import { style } from './monkey-tree-css.js';
 import { Icon } from '@material/mwc-icon';
 
 import * as R from 'ramda';
-
-const isNotEmpty = R.complement(R.isEmpty);
-const isNotNil = R.complement(R.isNil);
-const isNotNilOrEmpty = R.both(isNotEmpty, isNotNil);
+import { isNotEmpty, isNotNil, isNotNilOrEmpty } from './monkey-tree-utils';
 
 class MonkeyTreeItem extends LitElement {
   static get properties() {
