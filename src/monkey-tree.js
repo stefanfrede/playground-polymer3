@@ -57,7 +57,10 @@ class MonkeyTree extends LitElement {
           this._deselectChildren(target.children.dom, this.model);
         }
 
-        const [selectedAncestor] = R.filter(R.prop('selected'), ancestors);
+        const [selectedAncestor] = R.filter(
+          ancestor => ancestor.selected,
+          ancestors
+        );
 
         if (isNotNil(selectedAncestor)) {
           this._removeSelected(selectedAncestor, this.model);
