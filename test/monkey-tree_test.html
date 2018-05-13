@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-  <title>monkey-tree test</title>
+  <title>test-element test</title>
 
   <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../node_modules/wct-browser-legacy/browser.js"></script>
@@ -20,25 +20,28 @@
 
   <test-fixture id="ChangedPropertyTestFixture">
     <template>
-      <monkey-tree data='{"icon":"arrow-back","name":"eert-omur"}'></monkey-tree>
+      <monkey-tree data='{"icon":"sentiment_very_satisfied","name":"monkey-tree"}'></monkey-tree>
     </template>
   </test-fixture>
 
-  <script>
-    suite('monkey-tree', () => {
+  <script type="module">
+    suite('test-element', () => {
+
       test('instantiating the element with default properties works', () => {
         const element = fixture('BasicTestFixture');
-        assert.equal(element.data.icon, 'folder');
-        assert.equal(element.data.name, 'Loading…');
-        assert.deepEqual(element.selected, []);
+        assert.deepEqual(element.data, {});
+        assert.deepEqual(element.model, []);
       });
 
       // test('setting a property on the element works', () => {
       //   // Create a test fixture
       //   const element = fixture('ChangedPropertyTestFixture');
-      //   assert.equal(element.data.icon, 'arrow-back');
-      //   assert.equal(element.data.name, 'eert-omur');
+      //   assert.equal(element.prop1, 'new-prop1');
+      //   const elementShadowRoot = element.shadowRoot;
+      //   const elementHeader = elementShadowRoot.querySelector('h2');
+      //   assert.equal(elementHeader.innerHTML, 'Hello new-prop1!');
       // });
+
     });
   </script>
 </body>

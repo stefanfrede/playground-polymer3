@@ -52,34 +52,6 @@ export const style = html`
       display: inline-block;
     }
 
-    :host .btn {
-      color: var(--primary-darker);
-    }
-
-    :host .btn__placeholder .btn__icon > svg,
-    :host .btn__icon--type > svg {
-      fill: var(--primary);
-    }
-
-    :host .btn:hover,
-    :host(.selected) .btn {
-      color: var(--secondary-darker);
-    }
-
-    :host .btn__placeholder .btn:hover .btn__icon > svg,
-    :host .btn:hover .btn__icon--type > svg ,
-    :host(.selected) .btn__icon--type > svg {
-      fill: var(--secondary) !important;
-    }
-
-    :host(.marked) > [role="tree"] > [role="treeitem"] > .row {
-      color: var(--primary-lighter);
-    }
-
-    :host(.marked) > [role="tree"] > [role="treeitem"] > .row .btn__icon--type > svg {
-      fill: var(--primary-lighter);
-    }
-
     [role="tree"],
     [role="group"] {
       list-style: none;
@@ -96,46 +68,49 @@ export const style = html`
       flex-direction: column;
     }
 
+    [role="tree"].marked > [role="treeitem"] > .row > .btn:last-child > span {
+      color: var(--primary-lighter);
+    }
+
+    [role="tree"].marked > [role="treeitem"] > .row > .btn:last-child > .btn__icon {
+      color: var(--primary-lighter);
+    }
+
     .row {
       display: flex;
     }
 
     .btn {
       align-items: center;
+      color: var(--primary-darker);
       cursor: pointer;
       display: flex;
       transition: color 0.25s ease-out;
     }
 
-    .btn__icon,
-    .btn__icon > svg,
-    .btn__placeholder {
-      height: 1.5rem;
-      width: 1.5rem;
+    .btn:only-child {
+      margin-left: 1.5rem;
+    }
+
+    .btn:hover > span,
+    [role="tree"].selected .btn:last-child > span  {
+      color: var(--secondary-darker) !important;
+    }
+
+    .btn:hover > span.btn__icon,
+    [role="tree"].selected .btn:last-child > .btn__icon {
+      color: var(--secondary) !important;
     }
 
     .btn__icon {
-      align-items: center;
-      display: flex;
-      justify-content: center;
+      color: var(--primary);
+      height: 1.5rem;
+      transition: color 0.25s ease-out;
+      width: 1.5rem;
     }
 
     .btn__icon + span {
       margin-left: 0.25rem;
-    }
-
-    .btn__icon > svg {
-      transition: fill 0.25s ease-out;
-    }
-
-    .btn__icon--smaller > svg {
-      height: 1.4rem;
-      width: 1.4rem;
-    }
-
-    .btn__icon--small > svg {
-      height: 1rem;
-      width: 1rem;
     }
   </style>
 `;

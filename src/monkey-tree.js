@@ -13,27 +13,21 @@ const containsClass = R.curry((node, className) =>
 
 const containsClassMarked = containsClass(R.__, 'marked');
 const containsClassSelected = containsClass(R.__, 'selected');
+const isNotNilOrEmpty = R.both(isNotEmpty, isNotNil);
 
 class MonkeyTree extends LitElement {
   static get properties() {
     return {
       data: Object,
-      selected: Array,
+      model: Array,
     };
   }
 
   constructor() {
     super();
 
-    this.data = {
-      icon: 'folder',
-      name: 'Loading…',
-      opened: false,
-      root: true,
-      selected: false,
-    };
-
-    this.selected = [];
+    this.data = {};
+    this.model = [];
   }
 
   ready() {
@@ -44,6 +38,8 @@ class MonkeyTree extends LitElement {
   }
 
   _onSelect(e) {
+    e.stopPropagation();
+
     const isTreeItem = node => node.tagName === 'MONKEY-TREE-ITEM';
 
     const target = e.detail;
@@ -54,19 +50,19 @@ class MonkeyTree extends LitElement {
     const ancestors = R.filter(isNotTarget, R.filter(isTreeItem, path));
 
     if (isValidTarget(target)) {
-      if (containsClassSelected(target)) {
-        this._removeSelected(target, this.selected);
+      if (target.data.selected) {
+        this._removeSelected(target, this.model);
       } else {
-        if (containsClassMarked(target)) {
-          this._deselectChildren(target.domChildren, this.selected);
+        if (target.data.marked) {
+          this._deselectChildren(target.children.dom, this.model);
         }
 
-        const [selectedAncestor] = R.filter(containsClassSelected, ancestors);
+        const [selectedAncestor] = R.filter(R.prop('selected'), ancestors);
 
         if (isNotNil(selectedAncestor)) {
-          this._removeSelected(selectedAncestor, this.selected);
+          this._removeSelected(selectedAncestor, this.model);
           this._deselectChild(
-            Array.from(selectedAncestor.domChildren),
+            Array.from(selectedAncestor.children.dom),
             selectedAncestor,
             ancestors,
             target
@@ -76,19 +72,22 @@ class MonkeyTree extends LitElement {
         }
       }
 
-      if (isNotEmpty(this.selected)) {
-        R.forEach(this._addSelection, this.selected);
+      if (isNotEmpty(this.model)) {
+        R.forEach(
+          node => (node.marked = true),
+          R.uniq(
+            R.reduce((acc, node) => [...acc, ...node.value], [], this.model)
+          )
+        );
       }
     }
   }
 
   _onToggle(e) {
-    const target = e.detail;
-    const hasChildren = target.hasChildren;
-    const opened = target.opened;
-    const newOpened = R.and(R.not(opened), hasChildren);
+    e.stopPropagation();
 
-    target.opened = newOpened;
+    const target = e.detail;
+    target.opened = !target.opened;
   }
 
   _deselectChild(children, parent, ancestors, target) {
@@ -98,7 +97,7 @@ class MonkeyTree extends LitElement {
       const hasSelected = !!~index;
 
       if (hasSelected) {
-        this._deselectChild(child.domChildren, child, ancestors, target);
+        this._deselectChild(child.children.dom, child, ancestors, target);
       } else {
         if (R.not(R.equals(child, target))) {
           const findParentIn = R.findIndex(R.equals(parent));
@@ -111,29 +110,25 @@ class MonkeyTree extends LitElement {
   }
 
   _deselectChildren(children, selected) {
-    const hasChildren = R.compose(
-      R.both(isNotNil, isNotEmpty),
-      R.prop('children')
-    );
-
     children.forEach(child => {
-      if (containsClassSelected(child)) {
+      if (child.selected) {
         this._removeSelected(child, selected);
       }
 
-      if (hasChildren(child.data)) {
-        this._deselectChildren(child.domChildren, selected);
+      if (isNotNilOrEmpty(child.data.children)) {
+        this._deselectChildren(child.children.dom, selected);
       }
     });
   }
 
-  _addSelected(key, value) {
+  _addSelected(target, ancestors) {
     const object = {
-      key,
-      value,
+      key: target,
+      value: ancestors,
     };
 
-    this.selected.push(object);
+    target.selected = true;
+    this.model.push(object);
   }
 
   _removeSelected(target, selected) {
@@ -143,34 +138,15 @@ class MonkeyTree extends LitElement {
     const isSelected = !!~index;
 
     if (isSelected) {
-      this._removeSelection(selected[index]);
-      this.selected.splice(index, 1);
+      const ancestors = selected[index].value;
+
+      if (isNotEmpty(ancestors)) {
+        ancestors.forEach(ancestor => (ancestor.marked = false));
+      }
+
+      target.selected = false;
+      this.model.splice(index, 1);
     }
-  }
-
-  _addSelection(target) {
-    const addClass = R.curry((node, className) =>
-      node.classList.add(className)
-    );
-    const addClassMarked = addClass(R.__, 'marked');
-    const addClassSelected = addClass(R.__, 'selected');
-
-    addClassSelected(target.key);
-    R.forEach(addClassMarked, target.value);
-  }
-
-  _removeSelection(target) {
-    const removeClass = R.curry((node, className) =>
-      node.classList.remove(className)
-    );
-
-    const removeClassMarked = removeClass(R.__, 'marked');
-    const removeClassSelected = removeClass(R.__, 'selected');
-
-    // Remove the selected class from target
-    removeClassSelected(target.key);
-    // Remove the marked class from target ancestors
-    R.forEach(removeClassMarked, target.value);
   }
 
   _render({ data }) {
@@ -181,7 +157,7 @@ class MonkeyTree extends LitElement {
         }
       </style>
 
-      <monkey-tree-item id="root" data="${data}"></monkey-tree-item>
+      <monkey-tree-item data="${data}"></monkey-tree-item>
     `;
   }
 }
