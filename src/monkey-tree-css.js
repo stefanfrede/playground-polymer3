@@ -1,37 +1,10 @@
 import { html } from '@polymer/lit-element';
 
+import { buttonReset } from './button-reset-css.js';
+
 export const style = html`
+  ${buttonReset}
   <style>
-    button {
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: auto;
-      overflow: visible;
-
-      background: transparent;
-
-      /* inherit font & color from ancestor */
-      color: inherit;
-      font: inherit;
-
-      /* Normalize line-height. Cannot be changed from normal in Firefox 4+. */
-      line-height: normal;
-
-      /* Corrects font smoothing for webkit */
-      -webkit-font-smoothing: inherit;
-      -moz-osx-font-smoothing: inherit;
-
-      /* Corrects inability to style clickable input types in iOS */
-      -webkit-appearance: none;
-    }
-
-    /* Remove excess padding and border in Firefox 4+ */
-    button::-moz-focus-inner {
-        border: 0;
-        padding: 0;
-    }
-
     @keyframes spin {
       from {
         transform: rotate(0deg);
@@ -92,12 +65,18 @@ export const style = html`
       margin-left: 1.5rem;
     }
 
+    .btn:focus {
+      outline: none;
+    }
+
     .btn:hover > span,
+    .btn:focus > span,
     [role="tree"].selected .btn:last-child > span  {
       color: var(--secondary-darker) !important;
     }
 
     .btn:hover > span.btn__icon,
+    .btn:focus > span.btn__icon,
     [role="tree"].selected .btn:last-child > .btn__icon {
       color: var(--secondary) !important;
     }
