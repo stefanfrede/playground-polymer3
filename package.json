@@ -7,7 +7,9 @@
     "precommit": "lint-staged",
     "lint": "npm run lint:javascript && npm run lint:polymer",
     "lint:javascript": "npx eslint .",
-    "lint:polymer": "polymer lint"
+    "lint:polymer": "polymer lint",
+    "start": "polymer serve --open",
+    "test": "polymer test"
   },
   "browserslist": [
     "> 1%",
