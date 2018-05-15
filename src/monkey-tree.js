@@ -9,7 +9,8 @@ class MonkeyTree extends LitElement {
   static get properties() {
     return {
       data: Object,
-      model: Array,
+      mode: String,
+      _model: Array,
     };
   }
 
@@ -17,7 +18,8 @@ class MonkeyTree extends LitElement {
     super();
 
     this.data = {};
-    this.model = [];
+    this.mode = 'single';
+    this._model = [];
   }
 
   ready() {
@@ -40,11 +42,22 @@ class MonkeyTree extends LitElement {
     const ancestors = R.filter(isNotTarget, R.filter(isTreeItem, path));
 
     if (isValidTarget(target)) {
+      if (this.mode !== 'multi') {
+        if (isNotEmpty(this._model)) {
+          const selected = this._model[0].key;
+          const isNotEqualTarget = R.compose(R.not, R.equals(target));
+
+          if (isNotEqualTarget(selected)) {
+            this._removeSelected(selected, this._model);
+          }
+        }
+      }
+
       if (target.data.selected) {
-        this._removeSelected(target, this.model);
+        this._removeSelected(target, this._model);
       } else {
         if (target.data.marked) {
-          this._deselectChildren(target.children.dom, this.model);
+          this._deselectChildren(target.children.dom, this._model);
         }
 
         const [selectedAncestor] = R.filter(
@@ -53,7 +66,7 @@ class MonkeyTree extends LitElement {
         );
 
         if (isNotNil(selectedAncestor)) {
-          this._removeSelected(selectedAncestor, this.model);
+          this._removeSelected(selectedAncestor, this._model);
           this._deselectChild(
             Array.from(selectedAncestor.children.dom),
             selectedAncestor,
@@ -65,11 +78,11 @@ class MonkeyTree extends LitElement {
         }
       }
 
-      if (isNotEmpty(this.model)) {
+      if (isNotEmpty(this._model)) {
         R.forEach(
           node => (node.marked = true),
           R.uniq(
-            R.reduce((acc, node) => [...acc, ...node.value], [], this.model),
+            R.reduce((acc, node) => [...acc, ...node.value], [], this._model),
           ),
         );
       }
@@ -121,7 +134,7 @@ class MonkeyTree extends LitElement {
     };
 
     target.selected = true;
-    this.model.push(object);
+    this._model.push(object);
   }
 
   _removeSelected(target, selected) {
@@ -138,7 +151,7 @@ class MonkeyTree extends LitElement {
       }
 
       target.selected = false;
-      this.model.splice(index, 1);
+      this._model.splice(index, 1);
     }
   }
 
