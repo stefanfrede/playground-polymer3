@@ -14,7 +14,7 @@ install:
   - npm i -g polymer-cli@next
   - polymer install
 before_script:
-  - npm i -g eslint eslint-config-prettier eslint-plugin-prettier prettier
+  - npm i -g babel-eslint eslint eslint-config-prettier eslint-plugin-prettier prettier
   - npm run lint
 script:
   - xvfb-run polymer test
