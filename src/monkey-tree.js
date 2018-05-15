@@ -10,6 +10,7 @@ class MonkeyTree extends LitElement {
     return {
       data: Object,
       mode: String,
+      type: String,
       _model: Array,
     };
   }
@@ -19,6 +20,7 @@ class MonkeyTree extends LitElement {
 
     this.data = {};
     this.mode = 'single';
+    this.type = 'all';
     this._model = [];
   }
 
@@ -155,7 +157,7 @@ class MonkeyTree extends LitElement {
     }
   }
 
-  _render({ data }) {
+  _render({ data, type }) {
     return html`
       <style>
         :host {
@@ -163,7 +165,7 @@ class MonkeyTree extends LitElement {
         }
       </style>
 
-      <monkey-tree-item data="${data}"></monkey-tree-item>
+      <monkey-tree-item data="${data}" type="${type}"></monkey-tree-item>
     `;
   }
 }

@@ -91,5 +91,10 @@ export const style = html`
     .btn__icon + span {
       margin-left: 0.25rem;
     }
+
+    .container {
+      align-items: center;
+      display: flex;
+    }
   </style>
 `;
