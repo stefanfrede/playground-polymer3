@@ -49,7 +49,7 @@ class MonkeyTree extends LitElement {
 
         const [selectedAncestor] = R.filter(
           ancestor => ancestor.selected,
-          ancestors
+          ancestors,
         );
 
         if (isNotNil(selectedAncestor)) {
@@ -58,7 +58,7 @@ class MonkeyTree extends LitElement {
             Array.from(selectedAncestor.children.dom),
             selectedAncestor,
             ancestors,
-            target
+            target,
           );
         } else {
           this._addSelected(target, ancestors);
@@ -69,8 +69,8 @@ class MonkeyTree extends LitElement {
         R.forEach(
           node => (node.marked = true),
           R.uniq(
-            R.reduce((acc, node) => [...acc, ...node.value], [], this.model)
-          )
+            R.reduce((acc, node) => [...acc, ...node.value], [], this.model),
+          ),
         );
       }
     }
