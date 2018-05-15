@@ -10,6 +10,7 @@ class MonkeyTreeItem extends LitElement {
   static get properties() {
     return {
       data: Object,
+      type: String,
       _opened: Boolean,
       _marked: Boolean,
       _selected: Boolean,
@@ -160,7 +161,9 @@ class MonkeyTreeItem extends LitElement {
                   aria-level="2"
                   aria-setsize="${array.length}"
                   aria-posinset="${index + 1}">
-                  <monkey-tree-item data="${child}"></monkey-tree-item>
+                  <monkey-tree-item
+                    data="${child}"
+                    type="${this.type}"></monkey-tree-item>
                 </li>
               `,
           )}
@@ -170,16 +173,39 @@ class MonkeyTreeItem extends LitElement {
   }
 
   _renderSelectionButton() {
-    return html`
-      <button class="btn" on-click="${() => this._selectNode()}">
-        <span class="btn__icon">
-          <mwc-icon>${this.icon}</mwc-icon>
-        </span>
-        <span>
-          ${this.name}
-        </span>
-      </button>
+    const content = html`
+      <span class="btn__icon">
+        <mwc-icon>${this.icon}</mwc-icon>
+      </span>
+      <span>
+        ${this.name}
+      </span>
     `;
+
+    let isType;
+
+    switch (this.type) {
+      case 'branch':
+        isType = isNotEmpty(this.children);
+        break;
+      case 'node':
+        isType = R.isEmpty(this.children);
+        break;
+      default:
+        isType = true;
+    }
+
+    return isType
+      ? html`
+      <button class="btn" on-click="${() => this._selectNode()}">
+        ${content}
+      </button>
+      `
+      : html`
+      <div class="container">
+        ${content}
+      </div>
+      `;
   }
 
   _renderToggleButton() {
