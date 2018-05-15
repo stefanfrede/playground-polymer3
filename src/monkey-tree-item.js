@@ -50,7 +50,7 @@ class MonkeyTreeItem extends LitElement {
         (
           c ^
           (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-        ).toString(16)
+        ).toString(16),
     );
 
     return isNotNilOrEmpty(this.data)
@@ -66,7 +66,7 @@ class MonkeyTreeItem extends LitElement {
     return isNotNil(this.data)
       ? R.and(
           isNotNilOrEmpty(this.data.marked),
-          R.equals(this.data.marked, true)
+          R.equals(this.data.marked, true),
         )
         ? true
         : defaultValue
@@ -94,7 +94,7 @@ class MonkeyTreeItem extends LitElement {
     return isNotNil(this.data)
       ? R.and(
           isNotNilOrEmpty(this.data.opened),
-          R.equals(this.data.opened, true)
+          R.equals(this.data.opened, true),
         )
         ? true
         : defaultValue
@@ -112,7 +112,7 @@ class MonkeyTreeItem extends LitElement {
     return isNotNil(this.data)
       ? R.and(
           isNotNilOrEmpty(this.data.selected),
-          R.equals(this.data.selected, true)
+          R.equals(this.data.selected, true),
         )
         ? true
         : defaultValue
@@ -130,7 +130,7 @@ class MonkeyTreeItem extends LitElement {
         bubbles: true,
         composed: true,
         detail: this,
-      })
+      }),
     );
   }
 
@@ -140,7 +140,7 @@ class MonkeyTreeItem extends LitElement {
         bubbles: true,
         composed: true,
         detail: this,
-      })
+      }),
     );
   }
 
@@ -162,7 +162,7 @@ class MonkeyTreeItem extends LitElement {
                   aria-posinset="${index + 1}">
                   <monkey-tree-item data="${child}"></monkey-tree-item>
                 </li>
-              `
+              `,
           )}
         </ul>
       `;

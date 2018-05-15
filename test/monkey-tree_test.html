@@ -30,7 +30,8 @@
       test('instantiating the element with default properties works', () => {
         const element = fixture('BasicTestFixture');
         assert.deepEqual(element.data, {});
-        assert.deepEqual(element.model, []);
+        assert.equal(element.mode, 'single');
+        assert.deepEqual(element._model, []);
       });
 
       // test('setting a property on the element works', () => {
