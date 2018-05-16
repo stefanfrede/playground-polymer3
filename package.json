@@ -26,9 +26,11 @@
     "url": "git@github.com:stefanfrede/monkey-tree.git"
   },
   "keywords": [
-    "polymer",
-    "polymer3",
-    "webcomponents"
+    "tree",
+    "monkey-tree",
+    "web-component",
+    "web-components",
+    "polymer"
   ],
   "author": "Stefan Frede <public@frede.biz>",
   "license": "MIT",
