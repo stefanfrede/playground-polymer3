@@ -1,10 +1,11 @@
 import { LitElement, html } from '@polymer/lit-element';
 
 import { style } from './monkey-tree-css.js';
-import { Icon } from '@material/mwc-icon';
 
 import * as R from 'ramda';
 import { isNotEmpty, isNotNil, isNotNilOrEmpty } from './monkey-tree-utils';
+
+import '@material/mwc-icon';
 
 class MonkeyTreeItem extends LitElement {
   static get properties() {
@@ -224,7 +225,7 @@ class MonkeyTreeItem extends LitElement {
     }
   }
 
-  _render({ _marked, _opened, _selected }) {
+  _render() {
     return html`
       ${this._renderStyle()}
       <ul role="tree" class$="${
