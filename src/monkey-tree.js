@@ -31,6 +31,18 @@ class MonkeyTree extends LitElement {
     this.addEventListener('toggleNode', this._onToggle);
   }
 
+  get disabled() {
+    return this.hasAttribute('disabled');
+  }
+
+  set disabled(val) {
+    if (val) {
+      this.setAttribute('disabled', '');
+    } else {
+      this.removeAttribute('disabled');
+    }
+  }
+
   _onSelect(e) {
     e.stopPropagation();
 
@@ -161,7 +173,12 @@ class MonkeyTree extends LitElement {
     return html`
       <style>
         :host {
-          display: block;
+          display: inline-flex;
+          outline: none;
+        }
+
+        :host([hidden]) {
+          display: none !important;
         }
       </style>
 

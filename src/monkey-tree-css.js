@@ -22,7 +22,12 @@ export const style = html`
       --secondary-lighter: #ff79b0;
       --secondary-darker: #c60055;
 
-      display: inline-block;
+      display: inline-flex;
+      outline: none;
+    }
+
+    :host([hidden]) {
+      display: none !important;
     }
 
     [role="tree"],
