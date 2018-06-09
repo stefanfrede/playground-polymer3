@@ -1,8 +1,30 @@
 [![Build Status](https://travis-ci.org/stefanfrede/monkey-tree.svg?branch=master)](https://travis-ci.org/stefanfrede/monkey-tree)
 
-# \<monkey-tree\>
+<h1>
+  <img
+    src="https://raw.githubusercontent.com/stefanfrede/monkey-tree/master/monkey.png"
+    width="32"
+    height="32"
+    alt="monkey"
+    align="center" />
+  &lt;monkey-tree&gt;
+</h1>
 
-Simple Polymer 3 tree component
+`<monkey-tree>` is a __Polymer 3__ element displaying a browsable tree of
+selectable nodes (`<monkey-tree-item>`).
+
+```html
+<monkey-tree
+  data="{
+    name: 'foobar',
+    children: [
+      { name: 'foo', icon: 'public' },
+      { name: 'bar' },
+      { name: 'baz', children: [ { name: 'qux'] }
+    ]"></monkey-tree>
+```
+
+![Screenshot of monkey-tree](https://raw.githubusercontent.com/stefanfrede/monkey-tree/master/screenshot.png)
 
 ## Install the Polymer-CLI
 

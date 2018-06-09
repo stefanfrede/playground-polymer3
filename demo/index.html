@@ -20,28 +20,126 @@
 </head>
 <body>
   <div class="vertical-section-container centered">
-    <h3>Basic monkey-tree demo</h3>
+    <h3>
+      Basic monkey-tree demo
+    </h3>
     <demo-snippet>
       <template>
-        <monkey-tree id="tree"></monkey-tree>
+        <monkey-tree id="tree-basic"></monkey-tree>
         <script>
-          const tree = document.getElementById('tree');
+          const treeBasic = document.getElementById('tree-basic');
 
-          tree.data = {
-            name: 'Hello',
+          treeBasic.data = {
+            name: 'foobar',
             children: [
               {
-                name: 'World',
+                name: 'foo',
                 icon: 'public',
               },
               {
-                name: 'There',
+                name: 'bar',
               },
               {
-                name: 'You',
+                name: 'baz',
                 children: [
                   {
-                    name: 'Are',
+                    name: 'qux',
+                  },
+                ],
+              },
+            ],
+          };
+        </script>
+      </template>
+    </demo-snippet>
+    <h3>
+      Multi-select monkey-tree demo
+    </h3>
+    <demo-snippet>
+      <template>
+        <monkey-tree id="tree-multi" mode="multi"></monkey-tree>
+        <script>
+          const treeMulti = document.getElementById('tree-multi');
+
+          treeMulti.data = {
+            name: 'foobar',
+            children: [
+              {
+                name: 'foo',
+                icon: 'public',
+              },
+              {
+                name: 'bar',
+              },
+              {
+                name: 'baz',
+                children: [
+                  {
+                    name: 'qux',
+                  },
+                ],
+              },
+            ],
+          };
+        </script>
+      </template>
+    </demo-snippet>
+    <h3>
+      Branch-select monkey-tree demo
+    </h3>
+    <demo-snippet>
+      <template>
+        <monkey-tree id="tree-branch" type="branch"></monkey-tree>
+        <script>
+          const treeBranch = document.getElementById('tree-branch');
+
+          treeBranch.data = {
+            name: 'foobar',
+            children: [
+              {
+                name: 'foo',
+                icon: 'public',
+              },
+              {
+                name: 'bar',
+              },
+              {
+                name: 'baz',
+                children: [
+                  {
+                    name: 'qux',
+                  },
+                ],
+              },
+            ],
+          };
+        </script>
+      </template>
+    </demo-snippet>
+    <h3>
+      Node-select monkey-tree demo
+    </h3>
+    <demo-snippet>
+      <template>
+        <monkey-tree id="tree-node" type="node"></monkey-tree>
+        <script>
+          const treeNode = document.getElementById('tree-node');
+
+          treeNode.data = {
+            name: 'foobar',
+            children: [
+              {
+                name: 'foo',
+                icon: 'public',
+              },
+              {
+                name: 'bar',
+              },
+              {
+                name: 'baz',
+                children: [
+                  {
+                    name: 'qux',
                   },
                 ],
               },
