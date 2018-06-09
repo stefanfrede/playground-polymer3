@@ -10,14 +10,33 @@ import '@material/mwc-icon';
 class MonkeyTreeItem extends LitElement {
   static get properties() {
     return {
+      /**
+       * Metadata describing the root node.
+       *
+       * @type {{name: string, icon: string, children: Array<Object>}}
+       */
       data: Object,
+
+      /**
+       * Selection type.
+       * Possible values are:
+       * all: All nodes are selectable.
+       * branch: Only branch nodes are selectable.
+       * node: Only nodes without children are selectable.
+       */
       type: String,
+
       _opened: Boolean,
       _marked: Boolean,
       _selected: Boolean,
     };
   }
 
+  /**
+   * Return the children of the node.
+   *
+   * @return {Array<Object>} The children.
+   */
   get children() {
     const defaultValue = [];
 
@@ -31,6 +50,11 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Return the icon name of the node.
+   *
+   * @return {string} The icon name.
+   */
   get icon() {
     const defaultValue = 'description';
 
@@ -45,6 +69,11 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Return the id of the node or create one.
+   *
+   * @return {string} The id.
+   */
   get id() {
     const defaultValue = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(
       /[018]/g,
@@ -62,6 +91,11 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Return if the node is marked or not.
+   *
+   * @return {boolean} true or false.
+   */
   get marked() {
     const defaultValue = false;
 
@@ -75,11 +109,21 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Mark the node as marked.
+   *
+   * @param {boolean} marked Either true or false.
+   */
   set marked(marked) {
     this.data.marked = marked;
     this._marked = marked;
   }
 
+  /**
+   * Return the name of the node.
+   *
+   * @return {string} The node name.
+   */
   get name() {
     const defaultValue = 'Loading…';
 
@@ -90,6 +134,11 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Return if the node is opened or not.
+   *
+   * @return {boolean} Either true or false.
+   */
   get opened() {
     const defaultValue = false;
 
@@ -103,11 +152,21 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Mark the node as opened.
+   *
+   * @param {boolean} opened Either true or false.
+   */
   set opened(opened) {
     this.data.opened = opened;
     this._opened = opened;
   }
 
+  /**
+   * Return if the node is selected or not.
+   *
+   * @return {boolean} Either true or false.
+   */
   get selected() {
     const defaultValue = false;
 
@@ -121,6 +180,11 @@ class MonkeyTreeItem extends LitElement {
       : defaultValue;
   }
 
+  /**
+   * Mark the node as selected.
+   *
+   * @param {boolean} selected Either true or false.
+   */
   set selected(selected) {
     this.data.selected = selected;
     this._selected = selected;
